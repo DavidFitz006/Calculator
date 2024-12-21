@@ -18,7 +18,7 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
     TarZ = st.number_input("Target Elevation (m):")
 
     # Calculate the distance
-    distance = math.sqrt((TarX - ArtX)**2 + (TarY - ArtY)**2 + (TarZ - ArtZ)**2)
+    distance = math.sqrt((TarX - ArtX)**2 + (TarY - ArtY)**2)# + (TarZ - ArtZ)**2)
     st.write("Distance: ", distance * 10)
 
     # Calculate the bearing
