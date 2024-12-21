@@ -24,7 +24,7 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
 #     angle_deg = math.degrees(angle_rad)
 #     bearing = (90 - angle_deg) % 360
 # 
-    st.write("Distance: "distance*10)
+    st.write("Distance: ",distance*10)
 
 
 
