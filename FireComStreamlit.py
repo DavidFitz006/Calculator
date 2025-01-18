@@ -19,7 +19,8 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
 
     # Calculate the distance
     distance = math.sqrt((TarX - ArtX)**2 + (TarY - ArtY)**2)# + (TarZ - ArtZ)**2)
-    st.write("Distance: ", distance * 10)
+    distance = distance * 10
+    st.write("Distance: ", distance)
 
     # Calculate the bearing
     delta_x = TarX - ArtX
@@ -31,7 +32,8 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
 
     # Normalize the angle to 0-360 degrees
     bearing = (angle_degrees + 360) % 360
-
     st.write("Bearing: ", bearing, "degrees")
 
+    rec_elv = -0.00001078 * distance - 0.0119 * distance + 33.341
+    st.write("Elevation:", rec_elv)
 
