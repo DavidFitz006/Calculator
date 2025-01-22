@@ -34,6 +34,7 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
     bearing = (angle_degrees + 360) % 360
     st.write("Bearing: ", bearing, "degrees")
 
-    rec_elv = -0.00001078 * distance - 0.0119 * distance + 33.341
+    return 
+    rec_elv = -0.00001078 * distance**2 - 0.0119 * distance + 33.341
     st.write("Elevation:", rec_elv)
 
