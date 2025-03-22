@@ -32,7 +32,7 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
     angle_degrees = math.degrees(angle_radians)
 
     # Normalize the angle to 0-360 degrees
-    mils = ((angle_degrees + 360) % 360) * 0.05625
+    mils = ((angle_degrees + 360) % 360) * 17.7777777778
     st.write("Bearing: ", mils, "mils")
     
     elevation_diff = (TarZ - ArtZ) / 100
