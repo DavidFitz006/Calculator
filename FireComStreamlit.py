@@ -35,7 +35,7 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
     mils = ((angle_degrees + 360) % 360) * 17.7777777778
     st.write("Bearing: ", mils, "mils")
     
-    elevation_diff = (TarZ - ArtZ) / 100
+    elevation_diff = (ArtZ - TarZ) / 100
     st.write("Elevation difference divided by 100: ", elevation_diff)
     
     elevation = st.number_input("Elevation: ")
