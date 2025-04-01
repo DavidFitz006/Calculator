@@ -3,7 +3,7 @@ import math
 import pandas as pd
 
 st.header("Artillery Calculator")
-df = pd.DataFrame()
+df = pd.DataFrame("Artillary Grid","Target Grid","Azimuth","Elevation")
 ArtGrid = st.text_input("Artillery grid reference (Enter the grid in the format xxxx-xxxx):")
 if len(ArtGrid) == 9 and ArtGrid[4] == '-':
     # Extract the first 4 digits and the last 4 digits
@@ -42,4 +42,4 @@ if len(TarGrid) == 9 and TarGrid[4] == '-':
     d_elv = st.number_input("D elv per 100m: ")
     fin_elv = st.write("Final Elevation: ", elevation + d_elv * elevation_diff)
 
-
+st.dataframe(df)
