@@ -2,44 +2,85 @@ import streamlit as st
 import math
 import pandas as pd
 
-st.header("Artillery Calculator")
-df = pd.DataFrame(columns=["Artillery Grid", "Target Grid", "Azimuth", "Elevation"])
-ArtGrid = st.text_input("Artillery grid reference (Enter the grid in the format xxxx-xxxx):")
-if len(ArtGrid) == 9 and ArtGrid[4] == '-':
-    # Extract the first 4 digits and the last 4 digits
-    ArtX = int(ArtGrid[:4])  # First 4 digits
-    ArtY = int(ArtGrid[5:])  # Last 4 digits
-    ArtZ = st.number_input("Artillery Elevation (m):")
+st.title("CPO & MFC Targeting Tool")
+st.header("Input Data")
 
-TarGrid = st.text_input("Target grid reference (Enter the grid in the format xxxx-xxxx):")
-if len(TarGrid) == 9 and TarGrid[4] == '-':
-    # Extract the first 4 digits and the last 4 digits
-    TarX = int(TarGrid[:4])  # First 4 digits
-    TarY = int(TarGrid[5:])  # Last 4 digits
-    TarZ = st.number_input("Target Elevation (m):")
+# Initialize session state
+if "results" not in st.session_state:
+    st.session_state.results = []
 
-    # Calculate the distance
-    distance = math.sqrt((TarX - ArtX)**2 + (TarY - ArtY)**2)# + (TarZ - ArtZ)**2)
-    distance = distance * 10
-    st.write("Distance: ", distance)
+def parse_grid_ref(grid_ref):
+    try:
+        easting_str, northing_str = grid_ref.split("-")
+        return float(easting_str), float(northing_str)
+    except:
+        return 0.0, 0.0
 
-    # Calculate the bearing
-    delta_x = TarX - ArtX
-    delta_y = TarY - ArtY
+col1, col2 = st.columns(2)
 
-    # Use atan2 with reversed arguments to match compass bearing conventions
-    angle_radians = math.atan2(delta_x, delta_y)
-    angle_degrees = math.degrees(angle_radians)
+with col1:
+    mortar_grid_ref = st.text_input("Mortar Grid Reference (Easting-Northing)", value="0-0")
+    mortar_easting, mortar_northing = parse_grid_ref(mortar_grid_ref)
+    mortar_elevation = st.number_input("Mortar Elevation (m)", value=0.0)
+    first_elevation = st.number_input("First Elevation (m)", value=0.0)
 
-    # Normalize the angle to 0-360 degrees
-    mils = ((angle_degrees + 360) % 360) * 17.7777777778
-    st.write("Bearing: ", mils, "mils")
-    
-    elevation_diff = (ArtZ - TarZ) / 100
-    st.write("Elevation difference divided by 100: ", elevation_diff)
-    
-    elevation = st.number_input("Elevation: ")
-    d_elv = st.number_input("D elv per 100m: ")
-    fin_elv = st.write("Final Elevation: ", elevation + d_elv * elevation_diff)
+with col2:
+    target_grid_ref = st.text_input("Target Grid Reference (Easting-Northing)", value="0-0")
+    target_easting, target_northing = parse_grid_ref(target_grid_ref)
+    target_elevation = st.number_input("Target Elevation (m)", value=0.0)
+    delv_per_100m = st.number_input("D elv / 100m", value=0.0)
+    target_description = st.text_input("Target Description", value="")
 
-st.dataframe(df)
+# Calculate distance and bearing
+dx = target_easting - mortar_easting
+dy = target_northing - mortar_northing
+distance = math.hypot(dx, dy) * 10
+
+# Calculate bearing in mils (6400 mils = 360 degrees)
+bearing_rad = math.atan2(dx, dy)
+bearing_deg = math.degrees(bearing_rad)
+if bearing_deg < 0:
+    bearing_deg += 360
+bearing_mils = bearing_deg * (6400 / 360)
+
+# Calculate elevation difference
+final_elevation = target_elevation
+delta_elevation = (final_elevation - first_elevation) / 100  # DIVIDED BY 100
+
+# Adjusted elevation output
+adjusted_elevation = first_elevation + (delta_elevation * delv_per_100m)
+
+# Display results
+st.header("Results")
+res_col1, res_col2 = st.columns(2)
+with res_col1:
+    st.metric("Distance (m)", f"{distance:.2f}")
+    st.metric("Elevation Difference ÷ 100 (m)", f"{delta_elevation:.4f}")
+with res_col2:
+    st.metric("Bearing (mils)", f"{bearing_mils:.2f}")
+    st.metric("Adjusted Elevation", f"{adjusted_elevation:.2f}")
+
+# Store Button
+col_store, col_reset = st.columns([1, 1])
+with col_store:
+    if st.button("Store Target"):
+        new_entry = {
+            "Target Description": target_description,
+            "Target Grid": target_grid_ref,
+            "Bearing (mils)": round(bearing_mils, 2),
+            "Adjusted Elevation": round(adjusted_elevation, 2),
+            "Distance (m)": round(distance, 2)
+        }
+        st.session_state.results.append(new_entry)
+
+with col_reset:
+    if st.button("Reset All"):
+        st.session_state.results = []
+
+# Display stored targets
+if st.session_state.results:
+    st.subheader("Stored Targets")
+    stored_df = pd.DataFrame(st.session_state.results)
+    st.dataframe(stored_df, use_container_width=True)
+    st.download_button("Download Results", stored_df.to_csv(index=False), "stored_targets.csv", "text/csv")
+
