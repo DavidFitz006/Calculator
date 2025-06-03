@@ -44,8 +44,7 @@ if bearing_deg < 0:
 bearing_mils = bearing_deg * (6400 / 360)
 
 # Calculate elevation difference
-final_elevation = target_elevation
-delta_elevation = (final_elevation - first_elevation) / 100  # DIVIDED BY 100
+delta_elevation = (mortar_elevation - target_elevation) / 100  # DIVIDED BY 100
 
 # Adjusted elevation output
 adjusted_elevation = first_elevation + (delta_elevation * delv_per_100m)
@@ -83,4 +82,3 @@ if st.session_state.results:
     stored_df = pd.DataFrame(st.session_state.results)
     st.dataframe(stored_df, use_container_width=True)
     st.download_button("Download Results", stored_df.to_csv(index=False), "stored_targets.csv", "text/csv")
-
