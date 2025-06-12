@@ -1,14 +1,10 @@
+
 import streamlit as st
-import math
 import pandas as pd
+import math
 
 st.title("CPO & MFC Targeting Tool")
-st.header("Input Data")
-import streamlit as st
-import pandas as pd
-import math
 
-# Initialize session state
 if "results" not in st.session_state:
     st.session_state.results = []
 
@@ -19,22 +15,22 @@ def parse_grid_ref(grid_ref):
     except:
         return 0.0, 0.0
 
-st.title("Mortar Fire Control Calculator")
-
 col1, col2 = st.columns(2)
 
 with col1:
     mortar_grid_ref = st.text_input("Mortar Grid Reference (Easting-Northing)", value="0-0")
     mortar_easting, mortar_northing = parse_grid_ref(mortar_grid_ref)
-    mortar_elevation = st.number_input("Mortar Elevation (m)", value=0.0)
+    st.title("")
+    target_grid_ref = st.text_input("Target Grid Reference (Easting-Northing)", value="0-0")
     first_elevation = st.number_input("First Elevation (m)", value=0.0)
     
     # Dropdown for Effect Required
     effect_required = st.selectbox("Effect Required", options=["HE", "SMK", "ILM"])
 
 with col2:
-    target_grid_ref = st.text_input("Target Grid Reference (Easting-Northing)", value="0-0")
+    mortar_elevation = st.number_input("Mortar Elevation (m)", value=0.0)
     target_easting, target_northing = parse_grid_ref(target_grid_ref)
+    st.title("")
     target_elevation = st.number_input("Target Elevation (m)", value=0.0)
     delv_per_100m = st.number_input("D elv / 100m", value=0.0)
     target_description = st.text_input("Target Description", value="")
@@ -62,12 +58,12 @@ adjusted_elevation = first_elevation + (delta_elevation * delv_per_100m)
 
 # Display results
 st.header("Results")
-res_col1, res_col2 = st.columns(2)
+res_col1, res_col2, res_col3 = st.columns(3)
 with res_col1:
     st.metric("Distance (m)", f"{distance:.2f}")
-    st.metric("Elevation Difference ÷ 100 (m)", f"{delta_elevation:.4f}")
 with res_col2:
     st.metric("Bearing (mils)", f"{bearing_mils:.2f}")
+with res_col3:
     st.metric("Adjusted Elevation", f"{adjusted_elevation:.2f}")
 
 # Store and Reset Buttons
