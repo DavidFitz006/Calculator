@@ -4,6 +4,9 @@ import pandas as pd
 
 st.title("CPO & MFC Targeting Tool")
 st.header("Input Data")
+import streamlit as st
+import pandas as pd
+import math
 
 # Initialize session state
 if "results" not in st.session_state:
@@ -16,6 +19,8 @@ def parse_grid_ref(grid_ref):
     except:
         return 0.0, 0.0
 
+st.title("Mortar Fire Control Calculator")
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -23,6 +28,9 @@ with col1:
     mortar_easting, mortar_northing = parse_grid_ref(mortar_grid_ref)
     mortar_elevation = st.number_input("Mortar Elevation (m)", value=0.0)
     first_elevation = st.number_input("First Elevation (m)", value=0.0)
+    
+    # Dropdown for Effect Required
+    effect_required = st.selectbox("Effect Required", options=["HE", "SMK", "ILM"])
 
 with col2:
     target_grid_ref = st.text_input("Target Grid Reference (Easting-Northing)", value="0-0")
@@ -30,6 +38,9 @@ with col2:
     target_elevation = st.number_input("Target Elevation (m)", value=0.0)
     delv_per_100m = st.number_input("D elv / 100m", value=0.0)
     target_description = st.text_input("Target Description", value="")
+
+    # Dropdown for Callsign
+    callsign = st.selectbox("Callsign", options=["10", "11", "12", "21", "22", "41", "50", "51", "52", "70"])
 
 # Calculate distance and bearing
 dx = target_easting - mortar_easting
@@ -59,7 +70,7 @@ with res_col2:
     st.metric("Bearing (mils)", f"{bearing_mils:.2f}")
     st.metric("Adjusted Elevation", f"{adjusted_elevation:.2f}")
 
-# Store Button
+# Store and Reset Buttons
 col_store, col_reset = st.columns([1, 1])
 with col_store:
     if st.button("Store Target"):
@@ -68,7 +79,9 @@ with col_store:
             "Target Grid": target_grid_ref,
             "Bearing (mils)": round(bearing_mils, 2),
             "Adjusted Elevation": round(adjusted_elevation, 2),
-            "Distance (m)": round(distance, 2)
+            "Distance (m)": round(distance, 2),
+            "Effect Required": effect_required,
+            "Callsign": callsign
         }
         st.session_state.results.append(new_entry)
 
