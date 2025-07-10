@@ -23,9 +23,6 @@ with col1:
     st.title("")
     target_grid_ref = st.text_input("Target Grid Reference (Easting-Northing)", value="0-0")
     first_elevation = st.number_input("First Elevation (m)", value=0.0)
-    
-    # Dropdown for Effect Required
-    effect_required = st.selectbox("Effect Required", options=["HE", "SMK", "ILM"])
 
 with col2:
     mortar_elevation = st.number_input("Mortar Elevation (m)", value=0.0)
@@ -34,9 +31,6 @@ with col2:
     target_elevation = st.number_input("Target Elevation (m)", value=0.0)
     delv_per_100m = st.number_input("D elv / 100m", value=0.0)
     target_description = st.text_input("Target Description", value="")
-
-    # Dropdown for Callsign
-    callsign = st.selectbox("Callsign", options=["10", "11", "12", "21", "22", "41", "50", "51", "52", "70"])
 
 # Calculate distance and bearing
 dx = target_easting - mortar_easting
@@ -76,8 +70,6 @@ with col_store:
             "Bearing (mils)": round(bearing_mils, 2),
             "Adjusted Elevation": round(adjusted_elevation, 2),
             "Distance (m)": round(distance, 2),
-            "Effect Required": effect_required,
-            "Callsign": callsign
         }
         st.session_state.results.append(new_entry)
 
