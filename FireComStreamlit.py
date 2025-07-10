@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 import math
 
-st.title("CPO & MFC Targeting Tool")
+st.title("45 Whiskey Mortar Tool")
 
 if "results" not in st.session_state:
     st.session_state.results = []
